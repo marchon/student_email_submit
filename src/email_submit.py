@@ -304,7 +304,7 @@ def create_message(path):
     return msg
     
 def send_message(m):
-    "Send a feedback message to the given SMTP object"
+    "Send a feedback message"
     from_addr = OPTIONS['email']
     to_addr = m['To']
 
@@ -434,8 +434,4 @@ if __name__ == '__main__':
         logging.error("Uncaught exception: %s" % str(e))
     finally:
         logging.shutdown()
-
-# TODO LIST
-# 2. Move or rename files when feedback has been sent.
-# 3. Interface to create feedback files (for people who can't or don't want to modify original attachments)
 
