@@ -1,7 +1,11 @@
-#+TITLE: email_submit.py: a simple grading system
+# Copyright (c) 2011 Richard Lawrence
+# This file is part of email_submit. email_submit is free software; 
+# please see the COPYING file for terms for modification and redistribution.
+
+#+TITLE: email_submit: a simple grading system
 #+AUTHOR:    Richard Lawrence
 #+EMAIL:     richard.lawrence@berkeley.edu
-#+DATE:      2011-08-23 Tue
+#+DATE:      \today
 #+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
@@ -13,7 +17,7 @@
 
 * Introduction
 ** What is it?
-   email_submit.py is an almost-stupidly simple system for managing
+   email_submit is an almost-stupidly simple system for managing
    submissions of student assignments (or whatever) via email. It
    takes care of:
      - splitting attachments off from incoming email
@@ -26,14 +30,14 @@
    hand, so you can focus on what's really important: grading those
    assignments.
 
-   The basic workflow that email_submit.py supports is:
+   The basic workflow that email_submit supports is:
    1) Download and save all incoming assignments at once
    2) Create feedback for each assignment (by modifying the assignment files)
    3) Send all assignment files back to their original senders at once,
       with your feedback
 
 ** What isn't it?
-   email_submit.py doesn't try to do things that other programs
+   email_submit doesn't try to do things that other programs
    already do quite well.  So it doesn't do these things:
      - fetch your mail for you (you must configure a mail-fetching
        program yourself; see "Configuration" below)
@@ -43,7 +47,7 @@
      - keep track of grades, calculate grades, etc.
 
 ** Who is it for?
-email_submit.py will be great for you if:
+email_submit will be great for you if:
    - you receive student assignments via email
    - you grade them electronically, by modifying the assignment
      files themselves
@@ -51,7 +55,7 @@ email_submit.py will be great for you if:
      yourself manual labor
 
 \noindent
-email_submit.py /might/ work for you if:
+email_submit /might/ work for you if:
    - you receive student assignments via email, but want to print
      hard copies for grading
    - you receive hard copies of student assignments, but want to
@@ -68,25 +72,25 @@ communications with your students comply with this law./
 
 That said (and with the understanding that I, the author, am not a
 lawyer), there shouldn't be any /additional/ FERPA-related issues with
-using email_submit.py to send graded assignments to your students,
+using email_submit to send graded assignments to your students,
 over and above the issues that would arise if you sent those same
-messages by hand.  email_submit.py uses the same protocols to
+messages by hand.  email_submit uses the same protocols to
 communicate messages to an outgoing mail server that your email client
 would; so assuming you have a setup where it would be legal to email
 your students their grades by hand, you should be able to configure
-email_submit.py to do it for you.
+email_submit to do it for you.
 
 * Installation
 ** Prerequisites
    1) *A Unix-like environment*. Something like GNU/Linux or Mac OS
       X. Sorry, Windows folks.[fn:1]
-   2) *Python*.  email_submit.py is a Python program, so you need a
+   2) *Python*.  email_submit is a Python program, so you need a
       Python interpreter.  Many operating systems ship with Python,
       but if you don't have it already, you can download it from
       http://python.org/download/.  (Make sure you download the latest
       2.x interpreter; Python 3 is not yet supported.)
    3) *A mail fetching program*.  If you don't know what this is, you
-      probably don't have one already, but never fear! email_submit.py
+      probably don't have one already, but never fear! email_submit
       is designed to work with getmail, another Python program, which
       you can download from http://pyropus.ca/software/getmail/. If
       you already have a mail fetching program, make sure it can be
@@ -94,16 +98,16 @@ email_submit.py to do it for you.
       of another program.
 
 ** Installation proper
-email_submit.py is a single-file Python program with several
+email_submit is a single-file Python program with several
 interfaces; to install it, you just need set up each of its interfaces
 as an executable file.
 
-   1) Put the email_submit.py file somewhere on your PATH.[fn:4]
-   2) Make the email_submit.py file executable.
-   3) Create links somewhere on your PATH to email_submit.py, with the names:
-      - get-submissions
-      - split-attachments
-      - send-feedback
+   1) Put the =email_submit.py= file somewhere on your PATH.[fn:4]
+   2) Make the =email_submit.py= file executable.
+   3) Create links somewhere on your PATH to =email_submit.py=, with the names:
+      - =get-submissions=
+      - =split-attachments=
+      - =send-feedback=
 
 \noindent
 So, for example, assuming =~/bin= is on your PATH:
@@ -122,7 +126,7 @@ $ ln -s email_submit.py send-feedback
 I can't tell you how to do this in general, but the important point
 here is that your mail fetching program needs to feed messages, one at
 a time, to the standard input of the =split-attachments= interface to
-email_submit.py.
+email_submit.
 
 If you are using getmail, here are some recommendations on how best to
 do this:
@@ -134,7 +138,7 @@ do this:
      submissions doesn't affect when or how your other email is
      downloaded.[fn:3]
   2) You may want to use multiple destinations and/or keep your
-     messages on the server. email_submit.py /throws away/ all parts of
+     messages on the server. email_submit /throws away/ all parts of
      a message that aren't attachments, so if your students send you
      important information that's not in the attachments, you'll need
      another way to read it.
@@ -166,9 +170,9 @@ delete = False
 delete_after = 7
 #+END_EXAMPLE
 
-** Configuring email_submit.py
+** Configuring email_submit
 Once you have your mail fetching program set up, all configuration for
-email_submit.py is done via global variables (marked in =ALL_CAPS= under
+email_submit is done via global variables (marked in =ALL_CAPS= under
 "Globals for configuration") at the top of the program file.
 
 I will eventually give more helpful descriptions of the options here,
@@ -210,7 +214,7 @@ SMTP_PASSWORD = 'my_password'
 #+END_EXAMPLE
 
 * Using the program
-If you installed email_submit.py correctly, you should have three
+If you installed email_submit correctly, you should have three
 'interfaces' available to you.  These basically behave like three
 separate programs, even though they are all contained in the same
 file.
@@ -225,7 +229,7 @@ option (or by setting the EMAIL_SUBMIT_DIRECTORY environment
 variable).  If no directory is specified, the current directory is
 used.
 
-*Note*: email_submit.py will /not/ create the submit directory
+*Note*: email_submit will /not/ create the submit directory
 if it doesn't already exist; you must do this yourself.
 
 *Note 2*: to keep things simple, the /only/ files in a given submit
@@ -294,7 +298,7 @@ it could occasionally be useful for tasks like getting all the
 attachments out of a directory of old email messages.  Be creative!
 
 ** Logging
-Whenever you use one of email_submit.py's interfaces, the actions that
+Whenever you use one of email_submit's interfaces, the actions that
 it takes will be logged.  This is useful for determining what went
 wrong if the program fails to work as expected.
 
@@ -311,13 +315,13 @@ information).
 
 * Footnotes
 
-[fn:1] (Technically, I think a getmail/email_submit.py setup could
+[fn:1] Technically, I think a getmail/email_submit setup could
       also work on Windows, but it would require a little legwork by
       you, dear user, to get the different interfaces set up: you need
       whatever the Windows equivalent of #!-syntax is, and filesystem
-      links to create the different interfaces.)
+      links to create the different interfaces.
 
-[fn:2] email_submit.py will always exit with a non-zero status if it
+[fn:2] email_submit will always exit with a non-zero status if it
       fails to save an attachment from a message; but it may write to
       sys.stderr even for errors that it handles just fine.
 

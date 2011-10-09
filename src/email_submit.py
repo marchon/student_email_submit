@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+# Copyright (c) 2011 Richard Lawrence
+# This file is part of email_submit. email_submit is free software; 
+# please see the COPYING file for terms for modification and redistribution.
+
 """
 email_submit.py
 
