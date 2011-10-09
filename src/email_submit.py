@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+# Copyright (c) 2011 Richard Lawrence
+# This file is part of email_submit. email_submit is free software; 
+# please see the COPYING file for terms for modification and redistribution.
+
 """
 email_submit.py
 
@@ -76,6 +81,7 @@ OPTIONS = {
     'log_file': 'email_submit.log', # may be overriden by command line option
     'log_level': logging.INFO,
     'overwrite_existing': False, # if False, always saves attachments under a unique name
+    'prepend_addr': True, # if False, does not prepend sender address to incoming filenames
 }
 
 # feedback message template
@@ -146,7 +152,14 @@ def get_filename(prefix, m):
     "Return the complete path and filename to save an attachment under"
     orig = get_mod_original_filename(m)
     d = determine_submit_directory()
-    candidate = os.path.join(d, prefix + '::' + orig)
+
+    # optionally do not prepend sender address and separator
+    if OPTIONS['prepend_addr']:
+        name = prefix + '::' + orig
+    else:
+        name = orig
+
+    candidate = os.path.join(d, name)
 
     # generate a unique filename if the user doesn't want files to be overwritten
     # preserve extension for platforms that rely on it
@@ -157,7 +170,11 @@ def get_filename(prefix, m):
         if not sep: # orig_base is empty and ext == orig
             orig_base, sep, ext = orig, '', ''
 
-        base = d + prefix + '::' + orig_base
+        if OPTIONS['prepend_addr']:
+            base = d + prefix + '::' + orig_base
+        else:
+            base = orig_base
+
         i = 1
         while os.path.exists(candidate):
             candidate = base + '-dup' + str(i) + sep + ext
@@ -304,7 +321,7 @@ def create_message(path):
     return msg
     
 def send_message(m):
-    "Send a feedback message to the given SMTP object"
+    "Send a feedback message"
     from_addr = OPTIONS['email']
     to_addr = m['To']
 
@@ -406,6 +423,9 @@ if __name__ == '__main__':
                       help='A directory in which to find or save attachments')
     parser.add_option('-l', '--log', dest='log_file',
                       help='A file in which to log warnings, messages, and errors')
+    parser.add_option('-n', '--no-prepend', dest='prepend_addr', action='store_false',
+                      help='Suppress prepending of email address and separator')
+
     (cmd_opts, args) = parser.parse_args()
 
     # update OPTIONS on the basis of command-line options
@@ -413,6 +433,8 @@ if __name__ == '__main__':
         OPTIONS['submit_directory'] = cmd_opts.submit_directory
     if cmd_opts.log_file:
         OPTIONS['log_file'] = cmd_opts.log_file
+    if cmd_opts.prepend_addr is not None:
+        OPTIONS['prepend_addr'] = cmd_opts.prepend_addr
 
     # set up logging
     logging.basicConfig(filename=OPTIONS['log_file'], level=OPTIONS['log_level'])
@@ -434,8 +456,4 @@ if __name__ == '__main__':
         logging.error("Uncaught exception: %s" % str(e))
     finally:
         logging.shutdown()
-
-# TODO LIST
-# 2. Move or rename files when feedback has been sent.
-# 3. Interface to create feedback files (for people who can't or don't want to modify original attachments)
 
